@@ -4,12 +4,13 @@ import java.util.List;
 
 import com.wipro.dream_shops.model.Product;
 import com.wipro.dream_shops.requests.AddProductRequest;
+import com.wipro.dream_shops.requests.ProductUpdateRequest;
 
 public interface IProductService {
 	Product addProduct(AddProductRequest product);
 	Product getProductById(Long id);
 	void deleteProductById(Long id);
-	void updateProduct(Product product,Long id);
+	Product updateProduct(ProductUpdateRequest request,Long id);
 	List<Product> getAllProducts();
 	List<Product> getProductsByCategory(String category);
 	List<Product> getProductsByBrand(String brand);

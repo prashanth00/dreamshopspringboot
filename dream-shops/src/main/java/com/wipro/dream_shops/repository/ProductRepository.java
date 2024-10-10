@@ -1,4 +1,4 @@
-package com.wipro.dream_shops.model.repository;
+package com.wipro.dream_shops.repository;
 
 import java.util.List;
 

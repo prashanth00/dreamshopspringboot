@@ -1,13 +1,17 @@
 package com.wipro.dream_shops.service.product;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.wipro.dream_shops.exceptions.ProductNotFoundException;
+import com.wipro.dream_shops.model.Category;
 import com.wipro.dream_shops.model.Product;
-import com.wipro.dream_shops.model.repository.ProductRepository;
+import com.wipro.dream_shops.repository.CategoryRepository;
+import com.wipro.dream_shops.repository.ProductRepository;
 import com.wipro.dream_shops.requests.AddProductRequest;
+import com.wipro.dream_shops.requests.ProductUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,12 +20,33 @@ import lombok.RequiredArgsConstructor;
 public class ProductService implements IProductService{
 
 	private final ProductRepository productRepository;
+	private final CategoryRepository categoryRepository;
 	@Override
-	public Product addProduct(AddProductRequest product) {
+	public Product addProduct(AddProductRequest request) {
 		// TODO Auto-generated method stub
-		return null;
+		// if category is found in DB
+		//If yes, set is as the new product category
+		//if no, then save it as a new category
+		// The set as the new product category
+		
+		Category category=Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName())).orElseGet(()->{
+			Category newCategory=new Category(request.getCategory().getName());
+		});
+		request.setCategory(category);
+		return productRepository.save(createProduct(request,category));
 	}
 
+	private Product createProduct(AddProductRequest request,Category category) {
+		return new Product(
+				request.getName(),
+				request.getBrand(),
+				request.getPrice(),
+				request.getInventory(),
+				request.getDescription(),
+				category
+		)
+	}
+	
 	@Override
 	public Product getProductById(Long id) {
 		// TODO Auto-generated method stub
@@ -38,11 +63,25 @@ public class ProductService implements IProductService{
 	}
 
 	@Override
-	public void updateProduct(Product product, Long id) {
+	public Product updateProduct(ProductUpdateRequest request, Long productId) {
 		// TODO Auto-generated method stub
-		
+		return productRepository.findById(productId)
+				.map(existingProduct->updateExistingProduct(existingProduct,request))
+				.map(productRepository::save)
+				.orElseThrow(()->new ProductNotFoundException("Product not found"));
 	}
-
+	
+	private Product updateExistingProduct(Product existingProduct,ProductUpdateRequest request) {
+		existingProduct.setName(request.getName());
+		existingProduct.setBrand(request.getBrand());
+		existingProduct.setBrand(request.getPrice());
+		existingProduct.setBrand(request.getInventory());
+		existingProduct.setBrand(request.getDescription());
+		
+		Category category=categoryRepository.findByName(request.getCategory().getName());
+		existingProduct.setCategory(category);
+		return existingProduct;
+	}
 	@Override
 	public List<Product> getAllProducts() {
 		// TODO Auto-generated method stub
@@ -70,7 +109,7 @@ public class ProductService implements IProductService{
 	@Override
 	public List<Product> getProductsByName(String name) {
 		// TODO Auto-generated method stub
-		return productRepository.findByName(name));
+		return productRepository.findByName(name);
 	}
 
 	@Override
