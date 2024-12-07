@@ -11,6 +11,7 @@ import com.wipro.dream_shops.model.CartItem;
 import com.wipro.dream_shops.repository.CartItemRepository;
 import com.wipro.dream_shops.repository.CartRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,6 +31,7 @@ public class CartService implements ICartService {
 		return cartRepository.save(cart);
 	}
 
+	@Transactional
 	@Override
 	public void clearCart(Long id) {
 		// TODO Auto-generated method stub
@@ -51,6 +53,12 @@ public class CartService implements ICartService {
 		Long newCartId=cartIdGenerator.incrementAndGet();
 		newCart.setId(newCartId);
 		return cartRepository.save(newCart).getId();
+	}
+
+	@Override
+	public Cart getCartByUserId(Long userId) {
+		// TODO Auto-generated method stub
+		return cartRepository.findByUserId(userId);
 	}
 
 }

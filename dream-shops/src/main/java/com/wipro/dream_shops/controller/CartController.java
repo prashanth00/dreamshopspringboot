@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,7 @@ public class CartController {
 		}
 	}
 	
-	@GetMapping("/{cartId}/clear")
+	@DeleteMapping("/{cartId}/clear")
 	public ResponseEntity<ApiResponse> clearCart(@PathVariable Long cartId){
 		try {
 			cartService.clearCart(cartId);

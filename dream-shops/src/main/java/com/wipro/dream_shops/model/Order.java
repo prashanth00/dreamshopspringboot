@@ -1,9 +1,10 @@
 package com.wipro.dream_shops.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wipro.dream_shops.enums.OrderStatus;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -12,35 +13,27 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class CartItem {
-	
+public class Order {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
-	private int quantity;
-	private BigDecimal unitPrice;
-	private BigDecimal totalPrice;
+	private Long orderId;
+	private LocalDate orderDate;
+	private BigDecimal totalAmount;
+	private OrderStatus orderStatus;
+	
+	@OneToMany(mappedBy="order",cascade=CascadeType.ALL,orphanRemoval=true)
+	private Set<OrderItem> orderItems;
 	
 	@ManyToOne
-	@JoinColumn(name="product_id")
-	private Product product;
-	
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="cart_id")
-	private Cart cart;
-	
-	public void setTotalPrice() {
-		this.totalPrice=this.unitPrice.multiply(new BigDecimal(quantity));
-	}
+	@JoinColumn(name="user_id")
+	private User user;
 }
