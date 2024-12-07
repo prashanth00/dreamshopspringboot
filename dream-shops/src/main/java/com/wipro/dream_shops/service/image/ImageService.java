@@ -13,14 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.wipro.dream_shops.dto.ImageDto;
 import com.wipro.dream_shops.exceptions.ResourceNotFoundException;
 import com.wipro.dream_shops.model.Image;
+import com.wipro.dream_shops.model.Product;
 import com.wipro.dream_shops.repository.ImageRepository;
 import com.wipro.dream_shops.service.product.IProductService;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService implements IImageService {
+public class ImageService  implements IImageService {
 
 	private final ImageRepository imageRepository;
 	private final IProductService productService; 
@@ -63,15 +63,15 @@ public class ImageService implements IImageService {
 				image.setDownloadUrl(downloadUrl);
 				Image savedImage=imageRepository.save(image);
 				
-				savedImage.setDownloadUrl(buildDownloadUrl"/api/v1/images/image/download/"+savedImage.getId());
+				savedImage.setDownloadUrl(buildDownloadUrl+savedImage.getId());
 				imageRepository.save(savedImage);
 				
 				ImageDto imageDto=new ImageDto();
-				ImageDto.setImageId(savedImage.getId());
-				imageDto.setImageName(savedImage.getFileName());
+				imageDto.setId(savedImage.getId());
+				imageDto.setFileName(savedImage.getFileName());
 				imageDto.setDownloadUrl(savedImage.getDownloadUrl());
 				savedImageDto.add(imageDto);
-			}catch(IOException e | SQLException e) {
+			}catch(IOException | SQLException e) {
 				throw new RuntimeException(e.getMessage());
 			}
 		}

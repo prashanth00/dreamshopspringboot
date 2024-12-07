@@ -2,6 +2,8 @@ package com.wipro.dream_shops.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +17,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Category {
@@ -25,6 +26,11 @@ public class Category {
 	private Long id;
 	private String name;
 
+	@JsonIgnore
 	@OneToMany(mappedBy="category")
 	private List<Product> product;
+	
+	  public Category(String name) {
+	        this.name = name;
+	    }
 }

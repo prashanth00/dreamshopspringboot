@@ -6,7 +6,7 @@ import com.wipro.dream_shops.model.Category;
 
 public interface ICategoryService {
 	Category getCategoryById(Long id);
-	Category getCateforyByName(String name);
+	Category getCategoryByName(String name);
 	List<Category> getAllCategories();
 	Category addCategory(Category category);
 	Category updateCategory(Category category,Long id);

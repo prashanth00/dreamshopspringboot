@@ -2,6 +2,7 @@ package com.wipro.dream_shops.service.product;
 
 import java.util.List;
 
+import com.wipro.dream_shops.dto.ProductDto;
 import com.wipro.dream_shops.model.Product;
 import com.wipro.dream_shops.requests.AddProductRequest;
 import com.wipro.dream_shops.requests.ProductUpdateRequest;
@@ -18,5 +19,7 @@ public interface IProductService {
 	List<Product> getProductsByName(String name);
 	List<Product> getProductsByBrandAndName(String category, String name);
 	Long countProductsByBrandAndName(String brand,String name);
+	ProductDto convertToDto(Product product);
+	List<ProductDto> getConvertedProducts(List<Product> products);
 }
 
