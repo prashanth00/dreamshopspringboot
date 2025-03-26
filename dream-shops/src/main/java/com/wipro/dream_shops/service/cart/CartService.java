@@ -1,6 +1,7 @@
 package com.wipro.dream_shops.service.cart;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.wipro.dream_shops.exceptions.ResourceNotFoundException;
 import com.wipro.dream_shops.model.Cart;
 import com.wipro.dream_shops.model.CartItem;
+import com.wipro.dream_shops.model.User;
 import com.wipro.dream_shops.repository.CartItemRepository;
 import com.wipro.dream_shops.repository.CartRepository;
 
@@ -37,7 +39,7 @@ public class CartService implements ICartService {
 		// TODO Auto-generated method stub
 		Cart cart=getCart(id);
 		cartItemRepository.deleteAllByCartId(id);
-		cart.getItems().clear();
+		cart.clearCart();
 		cartRepository.deleteById(id);
 	}
 
@@ -48,11 +50,14 @@ public class CartService implements ICartService {
 		return cart.getTotalAmount();
 	}
 	
-	public Long initializeNewCart() {
-		Cart newCart=new Cart();
-		Long newCartId=cartIdGenerator.incrementAndGet();
-		newCart.setId(newCartId);
-		return cartRepository.save(newCart).getId();
+	@Override
+	public Cart initializeNewCart(User user) {
+		return Optional.ofNullable(getCartByUserId(user.getId()))
+				.orElseGet(()->{
+					Cart cart=new Cart();
+					 cart.setUser(user);
+					return cartRepository.save(cart);
+				});
 	}
 
 	@Override

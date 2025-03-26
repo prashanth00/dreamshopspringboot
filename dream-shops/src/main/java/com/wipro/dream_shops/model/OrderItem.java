@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wipro.dream_shops.enums.OrderStatus;
 
 import jakarta.persistence.Entity;
@@ -28,6 +29,7 @@ public class OrderItem {
 	private int quantity;
 	private BigDecimal price;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="order_id")
 	private Order order;

@@ -6,5 +6,5 @@ import com.wipro.dream_shops.model.Cart;
 import com.wipro.dream_shops.model.Category;
 
 public interface CartRepository extends JpaRepository<Cart, Long>{
-
+	Cart findByUserId(Long id);
 }

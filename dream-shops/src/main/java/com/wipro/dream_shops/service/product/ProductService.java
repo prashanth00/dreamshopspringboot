@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.wipro.dream_shops.dto.ImageDto;
 import com.wipro.dream_shops.dto.ProductDto;
+import com.wipro.dream_shops.exceptions.AlreadyExistsException;
 import com.wipro.dream_shops.exceptions.ProductNotFoundException;
 import com.wipro.dream_shops.exceptions.ResourceNotFoundException;
 import com.wipro.dream_shops.model.Category;
@@ -38,6 +39,10 @@ public class ProductService implements IProductService{
 		//if no, then save it as a new category
 		// The set as the new product category
 		
+		if(productExists(request.getName(),request.getBrand())) {
+			throw new AlreadyExistsException(request.getBrand()+" "+request.getName()+" already exists,you may update this product instead! ");
+		}
+		
 		Category category=Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName())).orElseGet(()->{
 			Category newCategory=new Category(request.getCategory().getName());
 			return categoryRepository.save(newCategory);
@@ -46,6 +51,11 @@ public class ProductService implements IProductService{
 		return productRepository.save(createProduct(request,category));
 	}
 
+	
+	private boolean productExists(String name,String brand) {
+		return productRepository.existsByNameAndBrand(name,brand);
+	}
+	
 	private Product createProduct(AddProductRequest request,Category category) {
 		return new Product(
 				request.getName(),

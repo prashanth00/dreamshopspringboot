@@ -2,15 +2,16 @@ package com.wipro.dream_shops.service.user;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.wipro.dream_shops.dto.UserDto;
 import com.wipro.dream_shops.exceptions.AlreadyExistsException;
 import com.wipro.dream_shops.exceptions.ResourceNotFoundException;
 import com.wipro.dream_shops.model.User;
 import com.wipro.dream_shops.repository.UserRepository;
 import com.wipro.dream_shops.requests.CreateUserRequest;
 import com.wipro.dream_shops.requests.UserUpdateRequest;
-import com.wipro.dream_shops.service.product.IUserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService implements IUserService{
 	private final UserRepository userRepository;
-	
+	private final ModelMapper modelMapper;
 	@Override
 	public User getUserById(Long userId) {
 		// TODO Auto-generated method stub
@@ -56,4 +57,8 @@ public class UserService implements IUserService{
 		});
 	}
 	
+	@Override
+	public UserDto convertUserToDto(User user) {
+		return modelMapper.map(user, UserDto.class);
+	}
 }

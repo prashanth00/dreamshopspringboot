@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wipro.dream_shops.model.Cart;
+import com.wipro.dream_shops.model.User;
 import com.wipro.dream_shops.response.ApiResponse;
 import com.wipro.dream_shops.service.cart.CartService;
 import com.wipro.dream_shops.service.cart.ICartItemService;
 import com.wipro.dream_shops.service.cart.ICartService;
+import com.wipro.dream_shops.service.user.IUserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,16 +26,14 @@ import lombok.RequiredArgsConstructor;
 public class CartItemController {
 	private final ICartItemService cartItemService;
 	private final CartService cartService;
-	
+	private final IUserService userService;
 	@PostMapping("/item/add")
-	public ResponseEntity<ApiResponse> addItemToCart(@RequestParam(required=false) Long cartId,@RequestParam Long productId,@RequestParam Integer quantity){
-		
-		
+	public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long productId,@RequestParam Integer quantity){
 		try {
-			if(cartId==null) {
-				cartId=cartService.initializeNewCart();
-			}
-			cartItemService.addItemToCart(cartId, productId, quantity);
+			User user=userService.getUserById(4L);
+			Cart cart=cartService.initializeNewCart(user);
+			//7.10
+			cartItemService.addItemToCart(cart.getId(), productId, quantity);
 			return ResponseEntity.ok(new ApiResponse("Add Item Success",null));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

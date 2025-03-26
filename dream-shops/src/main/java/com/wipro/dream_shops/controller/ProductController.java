@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wipro.dream_shops.dto.ProductDto;
+import com.wipro.dream_shops.exceptions.AlreadyExistsException;
 import com.wipro.dream_shops.model.Product;
 import com.wipro.dream_shops.requests.AddProductRequest;
 import com.wipro.dream_shops.requests.ProductUpdateRequest;
@@ -54,8 +55,8 @@ public class ProductController {
 			Product theProduct=productService.addProduct(product);
 			ProductDto productDto=productService.convertToDto(theProduct);
 			return  ResponseEntity.ok(new ApiResponse("Add product success",productDto));
-		}catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
+		}catch(AlreadyExistsException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(),null));
 		}
 	}
 	
