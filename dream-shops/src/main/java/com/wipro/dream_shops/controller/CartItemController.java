@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
+import com.wipro.dream_shops.exceptions.ResourceNotFoundException;
 import com.wipro.dream_shops.model.Cart;
 import com.wipro.dream_shops.model.User;
 import com.wipro.dream_shops.response.ApiResponse;
@@ -18,6 +20,7 @@ import com.wipro.dream_shops.service.cart.ICartItemService;
 import com.wipro.dream_shops.service.cart.ICartService;
 import com.wipro.dream_shops.service.user.IUserService;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,7 +33,7 @@ public class CartItemController {
 	@PostMapping("/item/add")
 	public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long productId,@RequestParam Integer quantity){
 		try {
-			User user=userService.getUserById(4L);
+			User user=userService.getAuthenticatedUser();
 			Cart cart=cartService.initializeNewCart(user);
 			//7.10
 			cartItemService.addItemToCart(cart.getId(), productId, quantity);
@@ -46,10 +49,12 @@ public class CartItemController {
 		try {
 		cartItemService.removeItemFromCart(cartId, itemId);
 		return ResponseEntity.ok(new ApiResponse("Remove Item Success",null));
-	} catch (Exception e) {
+	} catch (ResourceNotFoundException e) {
 		// TODO Auto-generated catch block
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
-	} 
+	} catch(JwtException e) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(),null));
+	}
 	}
 	
 	@PutMapping("/cart/{cartId}/item/{itemId}/update")

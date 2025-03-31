@@ -3,6 +3,9 @@ package com.wipro.dream_shops.service.user;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.wipro.dream_shops.dto.UserDto;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService implements IUserService{
 	private final UserRepository userRepository;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 	@Override
 	public User getUserById(Long userId) {
 		// TODO Auto-generated method stub
@@ -32,7 +36,7 @@ public class UserService implements IUserService{
 		return Optional.of(request).filter(user->!userRepository.existsByEmail(request.getEmail())).map(req->{
 			User user=new User();
 			user.setEmail(request.getEmail());
-			user.setPassword(request.getPassword());
+			user.setPassword(passwordEncoder.encode(request.getPassword()));
 			user.setFirstName(request.getFirstName());
 			user.setLastName(request.getLastName());
 			return userRepository.save(user);
@@ -60,5 +64,13 @@ public class UserService implements IUserService{
 	@Override
 	public UserDto convertUserToDto(User user) {
 		return modelMapper.map(user, UserDto.class);
+	}
+
+	@Override
+	public User getAuthenticatedUser() {
+		// TODO Auto-generated method stub
+		Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+		String email=authentication.getName();
+		return userRepository.findByEmail(email);
 	}
 }
